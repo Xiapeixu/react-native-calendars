@@ -33,6 +33,8 @@ class Calendar extends Component {
     theme: PropTypes.object,
     /** Collection of dates that have to be marked. Default = {} */
     markedDates: PropTypes.object,
+    /** Collection of dates that have to be text. Default = {} */
+    textDates: PropTypes.object,
     /** Specify style for calendar container element. Default = {} */
     style: viewPropTypes.style,
     /** Initially visible month. Default = Date() */
@@ -172,6 +174,15 @@ class Calendar extends Component {
     const DayComp = this.getDayComponent();
     const date = day.getDate();
     const dateAsObject = xdateToData(day);
+    const dateString = dateAsObject.dateString;
+    const textDates = this.props.textDates || {};
+    function renderText() {
+      if (textDates[dateString]) {
+        return textDates[dateString];
+      } else {
+        return null;
+      }
+    };
 
     return (
       <View style={{flex: 1, alignItems: 'center'}} key={id}>
@@ -186,6 +197,7 @@ class Calendar extends Component {
         >
           {date}
         </DayComp>
+        {renderText()}
       </View>
     );
   }
@@ -251,7 +263,7 @@ class Calendar extends Component {
     if (current) {
       const lastMonthOfDay = current.clone().addMonths(1, true).setDate(1).addDays(-1).toString('yyyy-MM-dd');
       if (this.props.displayLoadingIndicator &&
-          !(this.props.markedDates && this.props.markedDates[lastMonthOfDay])) {
+        !(this.props.markedDates && this.props.markedDates[lastMonthOfDay])) {
         indicator = true;
       }
     }
